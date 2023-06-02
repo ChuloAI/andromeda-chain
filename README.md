@@ -1,15 +1,18 @@
-# Andromeda - mastering all the chains
+# Andromeda-Chain - mastering all the chains
 
 This repository contains both a server and a client package.
 The server is (not very creatively) called `guidance_server`.
 
-The client is called Andromeda.
-
+The client is called `AndromedaChain`.
 
 ## Installation
 
-### Andromeda
 
+### AndromedaChain
+
+```bash
+pip install andromeda-chain
+``` 
 
 ### Guidance Server
 Serving the guidance library with HuggingFace models loaded with 4 bit quantization, behind a HTTP server.

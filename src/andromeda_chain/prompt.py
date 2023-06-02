@@ -2,7 +2,7 @@ from typing import Dict
 from dataclasses import dataclass, field
 
 @dataclass
-class GuidancePrompt:
+class AndromedaPrompt:
     name: str
     prompt_template: str
     input_vars: Dict[str, str]

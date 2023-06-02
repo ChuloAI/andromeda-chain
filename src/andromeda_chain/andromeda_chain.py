@@ -1,17 +1,17 @@
-from andromeda.prompt import GuidancePrompt
-from andromeda.guidance_response import GuidanceResponse
+from andromeda_chain.prompt import AndromedaPrompt
+from andromeda_chain.response import AndromedaResponse
 
 import requests
 from copy import deepcopy
 from typing import Dict, Optional
 
 
-class Andromeda:
+class AndromedaChain:
     def __init__(self, guidance_url: str = "http://0.0.0.0:9000") -> None:
         self._guidance_url = guidance_url
 
 
-    def run_guidance_prompt(self, guidance_prompt: GuidancePrompt, input_vars: Dict[str, str], macro_values:Optional[dict]=None) -> GuidanceResponse:
+    def run_guidance_prompt(self, guidance_prompt: AndromedaPrompt, input_vars: Dict[str, str], macro_values:Optional[dict]=None) -> AndromedaResponse:
         """Interprets the guidance prompt using a guidance server
         
         Also expands macro calls.
@@ -48,7 +48,7 @@ class Andromeda:
             guidance_kwargs=guidance_prompt.guidance_kwargs
         )
         expanded_generation = result.pop("__main__")
-        return GuidanceResponse(
+        return AndromedaResponse(
             expanded_generation=expanded_generation,
             result_vars=result,
         )
