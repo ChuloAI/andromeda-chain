@@ -1,6 +1,6 @@
 FROM python:3.10
 
-COPY ./requirements.gpu.txt requirements.txt
+COPY ./requirements.cpu.txt requirements.txt
 RUN pip3 install -r requirements.txt
 
 COPY . .
