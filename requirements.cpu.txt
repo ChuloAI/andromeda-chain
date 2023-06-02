@@ -2,3 +2,4 @@ fastapi==0.95.2
 uvicorn==0.22.0
 guidance==0.0.57
 transformers
+torch

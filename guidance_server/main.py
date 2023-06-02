@@ -1,11 +1,11 @@
+import logging
 import os
+from typing import Any, Dict, List
 
 from fastapi import FastAPI
-import logging
 import guidance
 from guidance import Program
 from pydantic import BaseModel
-from typing import Dict, List, Any
 import torch
 
 
@@ -17,22 +17,25 @@ nf4_config = None
 # Try to load quantization library
 try:
     from transformers import BitsAndBytesConfig
+
     # New 4 bit quantized
     nf4_config = BitsAndBytesConfig(
         load_in_4bit=True,
         bnb_4bit_quant_type="nf4",
         bnb_4bit_use_double_quant=True,
-        bnb_4bit_compute_dtype=torch.bfloat16
+        bnb_4bit_compute_dtype=torch.bfloat16,
     )
 
 except ImportError:
     pass
+
 
 class Request(BaseModel):
     input_vars: Dict[str, Any]
     output_vars: List[str]
     guidance_kwargs: Dict[str, str]
     prompt_template: str
+
 
 class RawRequest(BaseModel):
     prompt: str
@@ -44,16 +47,17 @@ class RawRequest(BaseModel):
 app = FastAPI()
 
 
-
 try:
     model = os.environ["MODEL_PATH"]
 except KeyError:
-    raise KeyError("You must set the 'MODEL_PATH' environment variable where the model to be loaded can be found.")
+    raise KeyError(
+        "You must set the 'MODEL_PATH' environment variable where the model to be loaded can be found."
+    )
 
 print("Loading model, this may take a while...")
 
 
-model_config={"revision": "main"}
+model_config = {"revision": "main"}
 if nf4_config:
     model_config["quantization_config"] = nf4_config
 
@@ -88,17 +92,13 @@ def call_raw_llm(request: RawRequest):
     prompt = request.prompt + "{{"
     if request.stop:
         prompt += "gen 'output' temperature={} max_tokens={} stop='{}'".format(
-            request.temperature,
-            request.max_new_tokens,
-            request.stop
+            request.temperature, request.max_new_tokens, request.stop
         )
 
     else:
         prompt += "gen 'output' temperature={} max_tokens={}".format(
-            request.temperature,
-            request.max_new_tokens
+            request.temperature, request.max_new_tokens
         )
-
 
     prompt += "}}"
 
