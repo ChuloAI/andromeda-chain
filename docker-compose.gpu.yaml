@@ -1,7 +1,7 @@
 version: '3'
 services:
   guidance:
-    image: guidance_server:gpu-0.1
+    image: paolorechia/guidance_server:gpu-0.1
     ports:
       - "9000:9000"
     volumes:
