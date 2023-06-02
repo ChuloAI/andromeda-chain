@@ -13,7 +13,7 @@ class AndromedaChain:
     def run_guidance_prompt(
         self,
         guidance_prompt: AndromedaPrompt,
-        input_vars: Dict[str, str],
+        input_vars: Optional[Dict[str, str]] = None,
         macro_values: Optional[dict] = None,
     ) -> AndromedaResponse:
         """Interprets the guidance prompt using a guidance server
@@ -22,7 +22,7 @@ class AndromedaChain:
 
         Parameters:
             guidance_prompt (GuidancePrompt): The prompt template to use for the guidance.
-            input_vars (Dict[str, str]): The input variables to use for the guidance.
+            input_vars (Optional[Dict[str, str]]): The input variables to use for the guidance.
             macro_values (Optional[dict]): Macro values to be expanded. Not all prompts need this.
 
         Returns:
@@ -46,6 +46,10 @@ class AndromedaChain:
             raise TypeError(
                 "Unexpanded macro variables in prompt! Fix your prompt or pass the macro variable"
             )
+
+        # Avoid passing null to API
+        if not input_vars:
+            input_vars = {}
 
         result = self._call_guidance(
             prompt_template=prompt_str,
