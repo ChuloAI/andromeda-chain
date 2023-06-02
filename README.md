@@ -15,9 +15,10 @@ pip install andromeda-chain
 ``` 
 
 ### Guidance Server
-Serving the guidance library with HuggingFace models loaded with 4 bit quantization, behind a HTTP server.
+Serving the guidance library with HuggingFace models loaded either with 4 bit quantization on GPU or on CPU (no quantization), behind a HTTP server.
 
 #### Docker Container
+
 
 Requirements:
 1. docker-engine
@@ -25,7 +26,9 @@ Requirements:
 
 If using GPU also:
 
-nvidia-docker: https://github.com/NVIDIA/nvidia-docker
+3. nvidia-docker: https://github.com/NVIDIA/nvidia-docker
+
+
 
 ##### Pulling the image
 You can find the images tags in [Docker Hub](https://hub.docker.com/repository/docker/paolorechia/guidance_server/general)
@@ -66,3 +69,25 @@ Or:
 3. Setup the environment variable `MODEL_PATH` in the `docker-compose.gpu` or `docker-compose.cpu` depending which one you want.
 4. Start the server.
 5. Use the Andromeda package to query the server.
+
+
+
+### Using Andromeda Package
+
+```python
+from andromeda_chain import AndromedaChain, AndromedaPrompt, AndromedaResponse
+
+chain = AndromedaChain()
+
+prompt = AndromedaPrompt(
+    name="hello",
+    prompt_template="""Howdy: {{gen 'expert_names' temperature=0 max_tokens=300}}""",
+    input_vars=[],
+    output_vars=["expert_names"]
+)
+
+response: AndromedaResponse = chain.run_guidance_prompt(prompt)
+# Use the response
+print(response.expanded_generation)
+print(response.result_vars)
+```
