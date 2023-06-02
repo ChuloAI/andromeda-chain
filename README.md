@@ -1,9 +1,16 @@
 # Andromeda-Chain - mastering all the chains
 
 This repository contains both a server and a client package.
-The server is (not very creatively) called `guidance_server`.
 
+The server is (not very creatively) called `guidance_server`.
 The client is called `AndromedaChain`.
+
+Why this package/library?
+The [guidance](https://github.com/microsoft/guidance) is an awesome library, but has limited support through HTTP APIs like Oobabooga UI.
+So I rolled my own HTTP server, which allows me to quickly prototype apps that use guidance templates.
+
+I originally created Oasis with a variant of this idea: https://github.com/paolorechia/oasis
+
 
 ## Installation
 
