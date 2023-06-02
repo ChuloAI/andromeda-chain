@@ -14,12 +14,15 @@ The client is called Andromeda.
 ### Guidance Server
 Serving the guidance library with HuggingFace models loaded with 4 bit quantization, behind a HTTP server.
 
-#### GPU-based Docker Container
+#### Docker Container
 
 Requirements:
 1. docker-engine
 2. docker-compose v2
-3. nvidia-docker: https://github.com/NVIDIA/nvidia-docker
+
+If using GPU also:
+
+nvidia-docker: https://github.com/NVIDIA/nvidia-docker
 
 ##### Pulling the image
 You can find the images tags in [Docker Hub](https://hub.docker.com/repository/docker/paolorechia/guidance_server/general)
@@ -37,8 +40,11 @@ docker-compose -f docker-compose.cpu up -d
 
 Note that you still need to setup the model (see in usage section).
 
+*LICENSE NOTE*: The GPU image is based on `nvidia/cuda:12.1.1-runtime-ubuntu22.04`, which is subject to the proprietary NVIDIA license.
+While the software from Andromeda repository is open source, some layers of the docker container are not.
 
-##### Building
+
+#### Building
 Just use the appropriate bash script
 ```bash
 ./build_gpu.sh
@@ -48,10 +54,6 @@ Or:
 ```bash
 ./build_cpu.sh
 ```
-
-#### CPU-based Docker Container
-This is something to be added.
-For now, you can find a similar version of this server running on CPU on https://github.com/paolorechia/oasis
 
 
 ## Usage
