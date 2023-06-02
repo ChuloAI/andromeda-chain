@@ -8,9 +8,9 @@ def init_chain():
 def build_prompt():
     return AndromedaPrompt(
         name="hello",
-        prompt_template="Howdy: {{gen 'response' max_tokens=8 stop='\n'}}",
-        input_vars={},
-        output_vars=["response"]
+        prompt_template="""Howdy: {{gen 'expert_names' temperature=0 max_tokens=300}}""",
+        input_vars=[],
+        output_vars=["expert_names"]
     )
 
 def test_importable():
@@ -26,5 +26,5 @@ def test_call_guidance():
     prompt = build_prompt()
     response = chain.run_guidance_prompt(prompt)
     assert isinstance(response, AndromedaResponse)
-    assert "Howdy:" in responsen.expanded_generation
-    assert response.result_vars["response"]
+    assert "Howdy:" in response.expanded_generation
+    assert response.result_vars["expert_names"]

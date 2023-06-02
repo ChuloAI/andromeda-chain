@@ -1,12 +1,9 @@
 version: '3'
 services:
   guidance:
-    build:
-      context: ./guidance_server
-      dockerfile: Dockerfile
+    image: guidance_server:gpu-0.1
     ports:
       - "9000:9000"
-    network_mode: "host"
     volumes:
       - ./models:/models
     # Add the "labels" section to set the container to remove itself on shutdown
@@ -17,6 +14,8 @@ services:
       - "com.docker.compose.project=brainchulo-guidance-server"
     # Add the "stop_signal: SIGINT" option to use SIGINT signal for stopping the container gracefully
     stop_signal: SIGINT
+    environment:
+      MODEL_PATH: /models/codegen-350M-mono
     deploy:
       resources:
         limits:

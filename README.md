@@ -32,13 +32,13 @@ You can find the images tags in [Docker Hub](https://hub.docker.com/repository/d
 The easiest way to pull it is to reuse the docker-compose file.
 
 ```bash
-docker-compose -f docker-compose.gpu up -d
+docker-compose -f docker-compose.gpu.yaml up
 ```
 
 Or use the CPU version
 
 ```bash
-docker-compose -f docker-compose.cpu up -d
+docker-compose -f docker-compose.cpu.yaml up
 ```
 
 Note that you still need to setup the model (see in usage section).
