@@ -15,7 +15,11 @@ services:
     # Add the "stop_signal: SIGINT" option to use SIGINT signal for stopping the container gracefully
     stop_signal: SIGINT
     environment:
-      MODEL_PATH: /models/codegen-350M-mono
+      MODEL_PATH: models/vicuna-AlekseyKorshuk-7B-GPTQ-4bit-128g
+      USE_GPTQ: true
+      GPTQ_WBITS: 4
+      GROUP_SIZE: 128
+      GPTQ_DEVICE: cuda
     deploy:
       resources:
         limits:
