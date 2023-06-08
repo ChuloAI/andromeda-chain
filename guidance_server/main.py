@@ -7,11 +7,12 @@ import guidance
 from guidance import Program
 from pydantic import BaseModel
 import torch
-
+from transformers import AutoTokenizer
 
 logger = logging.getLogger("uvicorn")
 logger.setLevel(logging.DEBUG)
 
+gptq_is_available = False
 nf4_config = None
 
 # Try to load quantization library
@@ -27,7 +28,9 @@ try:
     )
 
 except ImportError:
-    pass
+    # Try to load GPTQ-For-LLaMA
+    from gptq_for_llama.llama_inference import load_quant
+    gptq_is_available = True
 
 
 class Request(BaseModel):
@@ -48,7 +51,7 @@ app = FastAPI()
 
 
 try:
-    model = os.environ["MODEL_PATH"]
+    model_path = os.environ["MODEL_PATH"]
 except KeyError:
     raise KeyError(
         "You must set the 'MODEL_PATH' environment variable where the model to be loaded can be found."
@@ -57,11 +60,34 @@ except KeyError:
 print("Loading model, this may take a while...")
 
 
-model_config = {"revision": "main"}
-if nf4_config:
-    model_config["quantization_config"] = nf4_config
+model_config = {}
 
-llama = guidance.llms.Transformers(model, **model_config)
+llama = None
+
+if gptq_is_available and ("gptq" in model_path.lower() or os.getenv("USE_GPTQ") == "true"):
+    print("Loading GPTQ model...")
+    wbits = int(os.getenv("GPTQ_WBITS", 4))
+    group_size = int(os.getenv("GROUP_SIZE", 128))
+    gptq_device = os.getenv("GPTQ_DEVICE", "cuda")
+    print("WBITS: ", wbits)
+    print("GroupSize: ", group_size)
+    print("GPTQ Device: ", gptq_device)
+    tokenizer = AutoTokenizer.from_pretrained(model_path)
+    files = os.listdir(model_path)
+    for file in files:
+        if "safetensors" in file:
+            checkpoint = os.path.join(model_path, file)
+
+    model = load_quant(model_path, checkpoint, wbits=wbits, groupsize=group_size)
+    model.to(gptq_device)
+    llama = guidance.llms.Transformers(model, tokenizer, **model_config)
+
+else:
+    print("Loading HF model...")
+    if nf4_config:
+        model_config["revision"] = "main"
+        model_config["quantization_config"] = nf4_config
+    llama = guidance.llms.Transformers(model_path, **model_config)
 
 print("Server loaded!")
 
