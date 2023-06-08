@@ -28,11 +28,9 @@ try:
     )
 
 except ImportError:
-    pass
-
-# Try to load GPTQ-For-LLaMA
-from gptq_for_llama.llama_inference import load_quant
-gptq_is_available = True
+    # Try to load GPTQ-For-LLaMA
+    from gptq_for_llama.llama_inference import load_quant
+    gptq_is_available = True
 
 
 class Request(BaseModel):
@@ -66,7 +64,7 @@ model_config = {}
 
 llama = None
 
-if gptq_is_available and ("gptq" in model_path.lower() or os.getenv("USE_GPTQ")):
+if gptq_is_available and ("gptq" in model_path.lower() or os.getenv("USE_GPTQ") == "true"):
     print("Loading GPTQ model...")
     wbits = int(os.getenv("GPTQ_WBITS", 4))
     group_size = int(os.getenv("GROUP_SIZE", 128))
