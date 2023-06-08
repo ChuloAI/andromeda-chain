@@ -12,6 +12,7 @@ from transformers import AutoTokenizer
 logger = logging.getLogger("uvicorn")
 logger.setLevel(logging.DEBUG)
 
+loaded_bits_and_bytes = False
 gptq_is_available = False
 nf4_config = None
 
@@ -26,12 +27,17 @@ try:
         bnb_4bit_use_double_quant=True,
         bnb_4bit_compute_dtype=torch.bfloat16,
     )
+    loaded_bits_and_bytes = True
 
 except ImportError:
-    # Try to load GPTQ-For-LLaMA
+    pass
+
+# Try to load GPTQ-For-LLaMA
+try:
     from gptq_for_llama.llama_inference import load_quant
     gptq_is_available = True
-
+except ImportError:
+    pass
 
 class Request(BaseModel):
     input_vars: Dict[str, Any]
@@ -53,9 +59,8 @@ app = FastAPI()
 try:
     model_path = os.environ["MODEL_PATH"]
 except KeyError:
-    raise KeyError(
-        "You must set the 'MODEL_PATH' environment variable where the model to be loaded can be found."
-    )
+    error_msg = "You must set the 'MODEL_PATH' environment variable where the model to be loaded can be found."
+    raise KeyError(error_msg)
 
 print("Loading model, this may take a while...")
 
@@ -64,7 +69,14 @@ model_config = {}
 
 llama = None
 
-if gptq_is_available and ("gptq" in model_path.lower() or os.getenv("USE_GPTQ") == "true"):
+use_gptq = os.getenv("USE_GPTQ")
+detected_gptq_in_path = "gptq" in model_path.lower()
+
+print("MODEL_PATH: ", model_path)
+print("USE_GPTQ: ", use_gptq)
+print("DETECTED_GPTQ_IN_PATH: ", detected_gptq_in_path)
+
+if gptq_is_available and (detected_gptq_in_path or use_gptq == "true"):
     print("Loading GPTQ model...")
     wbits = int(os.getenv("GPTQ_WBITS", 4))
     group_size = int(os.getenv("GROUP_SIZE", 128))
@@ -84,6 +96,7 @@ if gptq_is_available and ("gptq" in model_path.lower() or os.getenv("USE_GPTQ") 
 
 else:
     print("Loading HF model...")
+    print("LOADED_BITS_AND_BYTES: ", loaded_bits_and_bytes)
     if nf4_config:
         model_config["revision"] = "main"
         model_config["quantization_config"] = nf4_config
