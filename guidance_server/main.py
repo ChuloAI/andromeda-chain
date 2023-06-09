@@ -87,7 +87,7 @@ if gptq_is_available and (detected_gptq_in_path or use_gptq == "true"):
     tokenizer = AutoTokenizer.from_pretrained(model_path)
     files = os.listdir(model_path)
     for file in files:
-        if "safetensors" in file:
+        if file.endswith(".safetensors") or file.endswith(".pt"):
             checkpoint = os.path.join(model_path, file)
 
     model = load_quant(model_path, checkpoint, wbits=wbits, groupsize=group_size)
