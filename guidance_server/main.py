@@ -8,6 +8,7 @@ from guidance import Program
 from pydantic import BaseModel
 
 from utils import settings, load_gptq, load_hf
+from utils.no_buffer import print
 
 logger = logging.getLogger("uvicorn")
 logger.setLevel(logging.DEBUG)
@@ -19,16 +20,17 @@ except KeyError:
     raise KeyError(error_msg)
 
 
+print("------------------Loading config from environment------------------")
 environment_variables = settings.EnvironmentVariables()
 print("Environment variables: ", environment_variables)
 
 general_settings = settings.GeneralSettings(environment_variables)
-print("General settings: ", environment_variables)
+print("General settings: ", general_settings)
 
-hugging_face_settings = settings.HuggingFaceSettings()
+hugging_face_settings = settings.HuggingFaceSettings(environment_variables)
 print("Hugging Face Settings: ", hugging_face_settings)
 
-gptq_settings = settings.GPTQSettings()
+gptq_settings = settings.GPTQSettings(environment_variables)
 print("GPTQ Settings: ", gptq_settings)
 
 
@@ -36,17 +38,17 @@ detected_gptq_in_path = "gptq" in model_path.lower()
 print("Loading model, this may take a while...")
 print("MODEL_PATH: ", model_path)
 print("DETECTED_GPTQ_IN_PATH: ", detected_gptq_in_path)
+print("--------------------------------------------------------------------")
 
-
+print("--------------------------Loading model-----------------------------")
 llama = None
 if detected_gptq_in_path or general_settings.loading_method == "GPTQ":
-    llama = load_gptq(model_path, general_settings, gptq_settings)
+    llama = load_gptq.load_gptq_model(model_path, general_settings, gptq_settings)
 else:
-    llama = load_hf(model_path, general_settings, hugging_face_settings)
-print("Model loaded! Starting server...")
+    llama = load_hf.load_hf_model(model_path, general_settings, hugging_face_settings)
+print("--------------------------Model loaded!-----------------------------")
 
-
-
+print("Starting server...")
 class Request(BaseModel):
     input_vars: Dict[str, Any]
     output_vars: List[str]

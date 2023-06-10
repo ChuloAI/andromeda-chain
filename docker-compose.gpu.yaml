@@ -15,11 +15,19 @@ services:
     # Add the "stop_signal: SIGINT" option to use SIGINT signal for stopping the container gracefully
     stop_signal: SIGINT
     environment:
-      MODEL_PATH: models/vicuna-AlekseyKorshuk-7B-GPTQ-4bit-128g
-      USE_GPTQ: true
-      GPTQ_WBITS: 4
-      GROUP_SIZE: 128
-      GPTQ_DEVICE: cuda
+      MODEL_PATH: /models/vicuna-7B-1.1-GPTQ-4bit-128g
+      # General Settings
+      GENERAL_LOADING_METHOD: GPTQ
+      GENERAL_BOOL_CPU_OFFLOADING: false
+      
+      # HuggingFace
+      HF_BOOL_USE_QUANT: true
+      HF_BOOL_USE_4_BIT: true
+
+      # GPTQ
+      GPTQ_INT_WBITS: 4
+      GPTQ_INT_GROUP_SIZE: 128
+      GPTQ_DEVICE: "cuda"
     deploy:
       resources:
         limits:
@@ -29,8 +37,3 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 120s

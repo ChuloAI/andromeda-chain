@@ -13,13 +13,13 @@ RUN apt install -y git
 COPY ./requirements.gpu.txt requirements.gpu.txt
 RUN pip3 install -r requirements.gpu.txt
 
-COPY ./guidance_server guidance_server
-
 # Expose library path to dynamic library linking
 ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:/usr/local/cuda-12/targets/x86_64-linux/lib
 
 # Tell bitsandbytes to use CUDA 121
 RUN ln -s /usr/local/cuda-12/targets/x86_64-linux/lib/libcudart.so.12 /usr/local/cuda-12/targets/x86_64-linux/lib/libcudart.so 
+
+COPY ./guidance_server guidance_server
 
 WORKDIR guidance_server
 

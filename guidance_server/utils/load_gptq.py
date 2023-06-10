@@ -5,6 +5,7 @@ import torch
 from transformers import AutoTokenizer
 
 from utils import settings
+from utils.no_buffer import print
 
 def load_gptq_model(model_path: str, general_settings: settings.GeneralSettings, gptq_settings: settings.GPTQSettings):
     print("Loading GPTQ model...")
@@ -24,7 +25,7 @@ def load_gptq_model(model_path: str, general_settings: settings.GeneralSettings,
     else:
         from gptq_for_llama.llama_inference import load_quant
         model = load_quant(model_path, checkpoint, wbits=gptq_settings.wbits, groupsize=gptq_settings.group_size)
-        model.to(gptq_settings.gptq_device)
+        model.to(gptq_settings.device)
 
     llama = guidance.llms.Transformers(model, tokenizer)
     return llama

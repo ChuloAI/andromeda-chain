@@ -1,4 +1,5 @@
 import os
+from utils.no_buffer import print
 
 
 class EnvironmentVariables:
@@ -13,7 +14,7 @@ class EnvironmentVariables:
 
         # GPTQ
         self.gptq_int_wbits = os.getenv("GPTQ_INT_WBITS", "4")
-        self.gptq_int_group_size = os.getenv("GPTQ_GROUP_INT_SIZE", "128")
+        self.gptq_int_group_size = os.getenv("GPTQ_INT_GROUP_SIZE", "128")
         self.gptq_device = os.getenv("GPTQ_DEVICE", "cuda")
 
     def __repr__(self) -> str:
@@ -49,26 +50,26 @@ class BaseSettings:
                         resolved_env_var_name = "_".join(splits[1:])
                         resolved_env_value = raw_env_value == "true"
                     else:
+                        resolved_env_var_name = scoped_env_var_name
                         resolved_env_value = raw_env_value
-
+                print(f"Var '{key}:{raw_env_value}' resolved to '{resolved_env_var_name}:{resolved_env_value}'")
                 setattr(self, resolved_env_var_name, resolved_env_value)
 
     def __repr__(self) -> str:
         return str(self.__dict__)
 
-class GeneralSettings:
+class GeneralSettings(BaseSettings):
     def __init__(self, env: EnvironmentVariables) -> None:
         super().__init__(env, "general")
         supported_list = ["HUGGING_FACE", "GPTQ"]
-        assert self.general_loading_method in [
-            supported_list
-        ], f"Loading method {self.general_loading_method} not in supported list: {supported_list}"
+        if self.loading_method not in supported_list:
+            raise ValueError(f"Loading method {self.loading_method} not in supported list: {supported_list}")
 
 
 class HuggingFaceSettings(BaseSettings):
     def __init__(self, env: EnvironmentVariables) -> None:
         super().__init__(env, "hf")
 
-class GPTQSettings:
+class GPTQSettings(BaseSettings):
     def __init__(self, env: EnvironmentVariables) -> None:
         super().__init__(env, "gptq")

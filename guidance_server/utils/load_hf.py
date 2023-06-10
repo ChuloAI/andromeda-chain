@@ -1,4 +1,5 @@
 from utils import settings
+from utils.no_buffer import print
 
 def load_hf_model(model_path: str, general_settings: settings.GeneralSettings, hf_settings: settings.HuggingFaceSettings):
     print("Loading HF model...")
