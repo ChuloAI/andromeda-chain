@@ -18,7 +18,7 @@ services:
       MODEL_PATH: /models/vicuna-7B-1.1-GPTQ-4bit-128g
       # General Settings
       GENERAL_LOADING_METHOD: GPTQ
-      GENERAL_BOOL_CPU_OFFLOADING: false
+      GENERAL_BOOL_CPU_OFFLOADING: true
       
       # HuggingFace
       HF_BOOL_USE_QUANT: true
@@ -27,6 +27,7 @@ services:
       # GPTQ
       GPTQ_INT_WBITS: 4
       GPTQ_INT_GROUP_SIZE: 128
+      GPTQ_INT_PRE_LOADED_LAYERS: 50
       GPTQ_DEVICE: "cuda"
     deploy:
       resources:

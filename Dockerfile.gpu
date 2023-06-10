@@ -19,8 +19,9 @@ ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:/usr/local/cuda-12/targets/x86_64-linux/lib
 # Tell bitsandbytes to use CUDA 121
 RUN ln -s /usr/local/cuda-12/targets/x86_64-linux/lib/libcudart.so.12 /usr/local/cuda-12/targets/x86_64-linux/lib/libcudart.so 
 
+# User land code
+RUN pip install git+https://github.com/paolorechia/GPTQ-for-LLaMa@3797a5ced97e9075bd1786c5744091c146c7bc9f
 COPY ./guidance_server guidance_server
-
 WORKDIR guidance_server
 
 # Set the entrypoint

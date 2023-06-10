@@ -15,6 +15,7 @@ class EnvironmentVariables:
         # GPTQ
         self.gptq_int_wbits = os.getenv("GPTQ_INT_WBITS", "4")
         self.gptq_int_group_size = os.getenv("GPTQ_INT_GROUP_SIZE", "128")
+        self.gptq_int_pre_loaded_layers = os.getenv("GPTQ_INT_PRE_LOADED_LAYERS", "50")
         self.gptq_device = os.getenv("GPTQ_DEVICE", "cuda")
 
     def __repr__(self) -> str:
