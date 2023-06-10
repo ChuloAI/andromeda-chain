@@ -27,7 +27,7 @@ services:
       # GPTQ
       GPTQ_INT_WBITS: 4
       GPTQ_INT_GROUP_SIZE: 128
-      GPTQ_INT_PRE_LOADED_LAYERS: 50
+      GPTQ_INT_PRE_LOADED_LAYERS: 20
       GPTQ_DEVICE: "cuda"
     deploy:
       resources:
