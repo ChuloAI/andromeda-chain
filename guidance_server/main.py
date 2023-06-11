@@ -7,7 +7,7 @@ import guidance
 from guidance import Program
 from pydantic import BaseModel
 
-from utils import settings, load_gptq, load_hf
+from utils import settings, load_gptq, load_hf, load_llama_cpp
 from utils.no_buffer import print
 
 logger = logging.getLogger("uvicorn")
@@ -19,6 +19,7 @@ except KeyError:
     error_msg = "You must set the 'MODEL_PATH' environment variable where the model to be loaded can be found."
     raise KeyError(error_msg)
 
+tokenizer_path = os.getenv("TOKENIZER_PATH", model_path)
 
 print("------------------Loading config from environment------------------")
 environment_variables = settings.EnvironmentVariables()
@@ -33,7 +34,13 @@ print("Hugging Face Settings: ", hugging_face_settings)
 gptq_settings = settings.GPTQSettings(environment_variables)
 print("GPTQ Settings: ", gptq_settings)
 
+cpp_settings = settings.LlamaCppSettings(environment_variables)
+print("CPP Settings: ", cpp_settings)
+
 tokenizer_settings = settings.TokenizerSettings(environment_variables)
+print("Tokenizer Settings: ", tokenizer_settings)
+
+guidance_settings = settings.GuidanceSettings(environment_variables)
 print("Tokenizer Settings: ", tokenizer_settings)
 
 
@@ -46,12 +53,37 @@ print("--------------------------------------------------------------------")
 print("--------------------------Loading model-----------------------------")
 llama = None
 if detected_gptq_in_path or general_settings.loading_method == "GPTQ":
-    llama = load_gptq.load_gptq_model(model_path, general_settings, gptq_settings, tokenizer_settings)
+
+    llama = load_gptq.load_gptq_model(
+        model_path,
+        tokenizer_path,
+        guidance_settings,
+        general_settings,
+        gptq_settings,
+        tokenizer_settings,
+    )
+
+elif general_settings.loading_method == "CPP":
+    llama = load_llama_cpp.load_llama_cpp(
+        model_path,
+        tokenizer_path,
+        guidance_settings,
+        cpp_settings,
+    )
 else:
-    llama = load_hf.load_hf_model(model_path, general_settings, hugging_face_settings, tokenizer_settings)
+    llama = load_hf.load_hf_model(
+        model_path,
+        tokenizer_path,
+        guidance_settings,
+        hugging_face_settings,
+        tokenizer_settings,
+    )
+
 print("--------------------------Model loaded!-----------------------------")
 
 print("Starting server...")
+
+
 class Request(BaseModel):
     input_vars: Dict[str, Any]
     output_vars: List[str]

@@ -8,6 +8,10 @@ class EnvironmentVariables:
         self.general_loading_method = os.getenv("GENERAL_LOADING_METHOD")
         self.general_bool_cpu_offloading = os.getenv("GENERAL_BOOL_CPU_OFFLOADING")
 
+        # Guidance Settings
+        self.guidance_after_role = os.getenv("GUIDANCE_AFTER_ROLE", "|>")
+        self.guidance_before_role = os.getenv("GUIDANCE_BEFORE_ROLE", "<|")
+
         # Tokenizer
         self.tk_bool_use_fast = os.getenv("TK_BOOL_USE_FAST")
 
@@ -21,11 +25,17 @@ class EnvironmentVariables:
         self.gptq_int_pre_loaded_layers = os.getenv("GPTQ_INT_PRE_LOADED_LAYERS", "50")
         self.gptq_device = os.getenv("GPTQ_DEVICE", "cuda")
 
+        # LLaMA CPP
+        self.cpp_int_n_threads = os.getenv("CPP_INT_N_THREADS", "12")
+        self.cpp_int_n_gpu_layers = os.getenv("CPP_INT_N_GPU_LAYERS", "500")
+        self.cpp_bool_caching: os.getenv("CPP_BOOL_CACHING", "false")
+
     def __repr__(self) -> str:
         return str(self.__dict__)
 
+
 class BaseSettings:
-    def __init__(self, env: EnvironmentVariables, prefix: str) -> None:        
+    def __init__(self, env: EnvironmentVariables, prefix: str) -> None:
         for key in dir(env):
             # key, e.g., gptq_device
             if prefix in key:
@@ -53,30 +63,59 @@ class BaseSettings:
                     elif maybe_type_prefix == "bool":
                         resolved_env_var_name = "_".join(splits[1:])
                         resolved_env_value = raw_env_value == "true"
+                    elif maybe_type_prefix == "float":
+                        resolved_env_var_name = "_".join(splits[1:])
+                        resolved_env_value = float(raw_env_value)
                     else:
                         resolved_env_var_name = scoped_env_var_name
                         resolved_env_value = raw_env_value
-                print(f"Var '{key}:{raw_env_value}' resolved to '{resolved_env_var_name}:{resolved_env_value}'")
+                print(
+                    f"Var '{key}:{raw_env_value}' resolved to '{resolved_env_var_name}:{resolved_env_value}'"
+                )
                 setattr(self, resolved_env_var_name, resolved_env_value)
 
     def __repr__(self) -> str:
         return str(self.__dict__)
+
 
 class GeneralSettings(BaseSettings):
     def __init__(self, env: EnvironmentVariables) -> None:
         super().__init__(env, "general")
         supported_list = ["HUGGING_FACE", "GPTQ"]
         if self.loading_method not in supported_list:
-            raise ValueError(f"Loading method {self.loading_method} not in supported list: {supported_list}")
+            raise ValueError(
+                f"Loading method {self.loading_method} not in supported list: {supported_list}"
+            )
+
 
 class HuggingFaceSettings(BaseSettings):
     def __init__(self, env: EnvironmentVariables) -> None:
         super().__init__(env, "hf")
 
+
 class GPTQSettings(BaseSettings):
     def __init__(self, env: EnvironmentVariables) -> None:
         super().__init__(env, "gptq")
 
+
 class TokenizerSettings(BaseSettings):
     def __init__(self, env: EnvironmentVariables) -> None:
         super().__init__(env, "tk")
+
+
+class LlamaCppSettings(BaseSettings):
+    def __init__(self, env: EnvironmentVariables) -> None:
+        super().__init__(env, "cpp")
+
+
+class GuidanceSettings(BaseSettings):
+    def __init__(self, env: EnvironmentVariables) -> None:
+        super().__init__(env, "guidance")
+
+
+    def build_args(self):
+        guidance_args = {}
+        if self.after_role and self.before_role:
+            guidance_args["after_role"] = self.after_role
+            guidance_args["before_role"] = self.before_role
+        return guidance_args
