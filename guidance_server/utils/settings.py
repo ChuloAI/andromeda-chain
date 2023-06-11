@@ -8,6 +8,9 @@ class EnvironmentVariables:
         self.general_loading_method = os.getenv("GENERAL_LOADING_METHOD")
         self.general_bool_cpu_offloading = os.getenv("GENERAL_BOOL_CPU_OFFLOADING")
 
+        # Tokenizer
+        self.tk_bool_use_fast = os.getenv("TK_BOOL_USE_FAST")
+
         # HuggingFace
         self.hf_bool_use_quant = os.getenv("HF_BOOL_USE_QUANT")
         self.hf_bool_load_in_4bit = os.getenv("HF_BOOL_USE_4_BIT")
@@ -66,7 +69,6 @@ class GeneralSettings(BaseSettings):
         if self.loading_method not in supported_list:
             raise ValueError(f"Loading method {self.loading_method} not in supported list: {supported_list}")
 
-
 class HuggingFaceSettings(BaseSettings):
     def __init__(self, env: EnvironmentVariables) -> None:
         super().__init__(env, "hf")
@@ -74,3 +76,7 @@ class HuggingFaceSettings(BaseSettings):
 class GPTQSettings(BaseSettings):
     def __init__(self, env: EnvironmentVariables) -> None:
         super().__init__(env, "gptq")
+
+class TokenizerSettings(BaseSettings):
+    def __init__(self, env: EnvironmentVariables) -> None:
+        super().__init__(env, "tk")

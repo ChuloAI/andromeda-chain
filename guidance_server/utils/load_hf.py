@@ -1,7 +1,8 @@
 from utils import settings
 from utils.no_buffer import print
+from transformers import AutoTokenizer
 
-def load_hf_model(model_path: str, general_settings: settings.GeneralSettings, hf_settings: settings.HuggingFaceSettings):
+def load_hf_model(model_path: str, general_settings: settings.GeneralSettings, hf_settings: settings.HuggingFaceSettings, tokenizer_settings: settings.TokenizerSettings):
     print("Loading HF model...")
 
     import torch
@@ -28,5 +29,6 @@ def load_hf_model(model_path: str, general_settings: settings.GeneralSettings, h
         model_config["quantization_config"] = nf4_config
 
     model_config["device_map"] = "auto"
-    llama = guidance.llms.Transformers(model_path, **model_config)
+    tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=tokenizer_settings.use_fast)
+    llama = guidance.llms.Transformers(model_path, tokenizer, **model_config)
     return llama

@@ -19,7 +19,10 @@ services:
       # General Settings
       GENERAL_LOADING_METHOD: GPTQ
       GENERAL_BOOL_CPU_OFFLOADING: true
-      
+
+      # Tokenizer Settings
+      TK_BOOL_USE_FAST: false
+
       # HuggingFace
       HF_BOOL_USE_QUANT: true
       HF_BOOL_USE_4_BIT: true
