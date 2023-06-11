@@ -8,4 +8,3 @@ peft @ git+https://github.com/huggingface/peft.git@3714aa2fff158fdfa637b2b659525
 scipy==1.10.1
 sentencepiece==0.1.99
 protobuf==3.20
-langchain
