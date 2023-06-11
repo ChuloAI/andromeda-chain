@@ -33,6 +33,9 @@ print("Hugging Face Settings: ", hugging_face_settings)
 gptq_settings = settings.GPTQSettings(environment_variables)
 print("GPTQ Settings: ", gptq_settings)
 
+tokenizer_settings = settings.TokenizerSettings(environment_variables)
+print("Tokenizer Settings: ", tokenizer_settings)
+
 
 detected_gptq_in_path = "gptq" in model_path.lower()
 print("Loading model, this may take a while...")
@@ -43,9 +46,9 @@ print("--------------------------------------------------------------------")
 print("--------------------------Loading model-----------------------------")
 llama = None
 if detected_gptq_in_path or general_settings.loading_method == "GPTQ":
-    llama = load_gptq.load_gptq_model(model_path, general_settings, gptq_settings)
+    llama = load_gptq.load_gptq_model(model_path, general_settings, gptq_settings, tokenizer_settings)
 else:
-    llama = load_hf.load_hf_model(model_path, general_settings, hugging_face_settings)
+    llama = load_hf.load_hf_model(model_path, general_settings, hugging_face_settings, tokenizer_settings)
 print("--------------------------Model loaded!-----------------------------")
 
 print("Starting server...")

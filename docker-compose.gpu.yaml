@@ -1,7 +1,7 @@
 version: '3'
 services:
   guidance:
-    image: guidance_server:gpu-0.3
+    image: guidance_server:gpu-0.4
     ports:
       - "9000:9000"
     volumes:
@@ -15,11 +15,14 @@ services:
     # Add the "stop_signal: SIGINT" option to use SIGINT signal for stopping the container gracefully
     stop_signal: SIGINT
     environment:
-      MODEL_PATH: /models/vicuna-7B-1.1-GPTQ-4bit-128g
+      MODEL_PATH: /models/wizardLM-7B-HF
       # General Settings
-      GENERAL_LOADING_METHOD: GPTQ
+      GENERAL_LOADING_METHOD: HUGGING_FACE
       GENERAL_BOOL_CPU_OFFLOADING: true
-      
+
+      # Tokenizer Settings
+      TK_BOOL_USE_FAST: false
+
       # HuggingFace
       HF_BOOL_USE_QUANT: true
       HF_BOOL_USE_4_BIT: true

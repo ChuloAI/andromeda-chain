@@ -7,7 +7,7 @@ from transformers import AutoTokenizer
 from utils import settings
 from utils.no_buffer import print
 
-def load_gptq_model(model_path: str, general_settings: settings.GeneralSettings, gptq_settings: settings.GPTQSettings):
+def load_gptq_model(model_path: str, general_settings: settings.GeneralSettings, gptq_settings: settings.GPTQSettings, tokenizer_settings: settings.TokenizerSettings):
     print("Loading GPTQ model...")
     files = os.listdir(model_path)
     for file in files:
@@ -27,6 +27,6 @@ def load_gptq_model(model_path: str, general_settings: settings.GeneralSettings,
         model = load_quant(model_path, checkpoint, wbits=gptq_settings.wbits, groupsize=gptq_settings.group_size)
         model.to(gptq_settings.device)
 
-    tokenizer = AutoTokenizer.from_pretrained(model_path)
+    tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=tokenizer_settings.use_fast)
     llama = guidance.llms.Transformers(model, tokenizer)
     return llama
