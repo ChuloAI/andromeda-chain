@@ -9,10 +9,8 @@ from utils.no_buffer import print
 
 
 def load_gptq_model(
-    model_path: str,
-    tokenizer_path: str,
-    guidance_settings: settings.GuidanceSettings,
     general_settings: settings.GeneralSettings,
+    guidance_settings: settings.GuidanceSettings,
     gptq_settings: settings.GPTQSettings,
     tokenizer_settings: settings.TokenizerSettings,
 ):
@@ -22,7 +20,7 @@ def load_gptq_model(
         if file.endswith(".safetensors") or file.endswith(".pt"):
             checkpoint = os.path.join(model_path, file)
 
-    if general_settings.cpu_offloading:
+    if gptq_settings.cpu_offloading:
         print(
             "Using CPU Offloading option. Please note that the env var 'GPTQ_DEVICE' is ignored with this option."
         )
@@ -31,7 +29,7 @@ def load_gptq_model(
         )
 
         model = load_quant_with_offload(
-            model_path,
+            general_settings.model_path,
             checkpoint,
             wbits=gptq_settings.wbits,
             groupsize=gptq_settings.group_size,

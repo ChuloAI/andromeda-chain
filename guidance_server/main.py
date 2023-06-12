@@ -13,13 +13,6 @@ from utils.no_buffer import print
 logger = logging.getLogger("uvicorn")
 logger.setLevel(logging.DEBUG)
 
-try:
-    model_path = os.environ["MODEL_PATH"]
-except KeyError:
-    error_msg = "You must set the 'MODEL_PATH' environment variable where the model to be loaded can be found."
-    raise KeyError(error_msg)
-
-tokenizer_path = os.getenv("TOKENIZER_PATH", model_path)
 
 print("------------------Loading config from environment------------------")
 environment_variables = settings.EnvironmentVariables()
@@ -44,9 +37,9 @@ guidance_settings = settings.GuidanceSettings(environment_variables)
 print("Tokenizer Settings: ", tokenizer_settings)
 
 
-detected_gptq_in_path = "gptq" in model_path.lower()
+detected_gptq_in_path = "gptq" in general_settings.model_path.lower()
 print("Loading model, this may take a while...")
-print("MODEL_PATH: ", model_path)
+print("MODEL_PATH: ", general_settings.model_path)
 print("DETECTED_GPTQ_IN_PATH: ", detected_gptq_in_path)
 print("--------------------------------------------------------------------")
 
@@ -54,24 +47,20 @@ print("--------------------------Loading model-----------------------------")
 llama = None
 if detected_gptq_in_path or general_settings.loading_method == "GPTQ":
     llama = load_gptq.load_gptq_model(
-        model_path,
-        tokenizer_path,
-        guidance_settings,
         general_settings,
+        guidance_settings,
         gptq_settings,
         tokenizer_settings,
     )
 elif general_settings.loading_method == "CPP":
     llama = load_llama_cpp.load_llama_cpp(
-        model_path,
-        tokenizer_path,
+        general_settings,
         guidance_settings,
         cpp_settings,
     )
 elif general_settings.loading_method == "HUGGING_FACE":
     llama = load_hf.load_hf_model(
-        model_path,
-        tokenizer_path,
+        general_settings,
         guidance_settings,
         hugging_face_settings,
         tokenizer_settings,

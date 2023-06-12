@@ -6,7 +6,14 @@ class EnvironmentVariables:
     def __init__(self) -> None:
         # General Settings
         self.general_loading_method = os.getenv("GENERAL_LOADING_METHOD")
-        self.general_bool_cpu_offloading = os.getenv("GENERAL_BOOL_CPU_OFFLOADING")
+
+        try:
+            self.general_model_path = os.environ["GENERAL_MODEL_PATH"]
+        except KeyError:
+            error_msg = "You must set the 'MODEL_PATH' environment variable where the model to be loaded can be found."
+            raise KeyError(error_msg)
+
+        self.general_tokenizer_path = os.getenv("GENERAL_TOKENIZER_PATH", self.general_model_path)
 
         # Guidance Settings
         self.guidance_after_role = os.getenv("GUIDANCE_AFTER_ROLE", "|>")
@@ -16,14 +23,18 @@ class EnvironmentVariables:
         self.tk_bool_use_fast = os.getenv("TK_BOOL_USE_FAST")
 
         # HuggingFace
-        self.hf_bool_use_quant = os.getenv("HF_BOOL_USE_QUANT")
         self.hf_bool_load_in_4bit = os.getenv("HF_BOOL_USE_4_BIT")
+        self.hf_bool_load_in_8bit = os.getenv("HF_BOOL_USE_8_BIT")
+        self.hf_bool_low_cpu_usage = os.getenv("HF_BOOL_LOW_CPU_USAGE")
+        self.hf_device_map = os.getenv("HF_DEVICE_MAP")
 
         # GPTQ
         self.gptq_int_wbits = os.getenv("GPTQ_INT_WBITS", "4")
         self.gptq_int_group_size = os.getenv("GPTQ_INT_GROUP_SIZE", "128")
         self.gptq_int_pre_loaded_layers = os.getenv("GPTQ_INT_PRE_LOADED_LAYERS", "50")
         self.gptq_device = os.getenv("GPTQ_DEVICE", "cuda")
+        self.gptq_bool_cpu_offloading = os.getenv("GPTQ_BOOL_CPU_OFFLOADING")
+
 
         # LLaMA CPP
         self.cpp_int_n_threads = os.getenv("CPP_INT_N_THREADS", "12")
