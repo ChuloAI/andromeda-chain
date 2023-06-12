@@ -53,7 +53,6 @@ print("--------------------------------------------------------------------")
 print("--------------------------Loading model-----------------------------")
 llama = None
 if detected_gptq_in_path or general_settings.loading_method == "GPTQ":
-
     llama = load_gptq.load_gptq_model(
         model_path,
         tokenizer_path,
@@ -62,7 +61,6 @@ if detected_gptq_in_path or general_settings.loading_method == "GPTQ":
         gptq_settings,
         tokenizer_settings,
     )
-
 elif general_settings.loading_method == "CPP":
     llama = load_llama_cpp.load_llama_cpp(
         model_path,
@@ -70,7 +68,7 @@ elif general_settings.loading_method == "CPP":
         guidance_settings,
         cpp_settings,
     )
-else:
+elif general_settings.loading_method == "HUGGING_FACE":
     llama = load_hf.load_hf_model(
         model_path,
         tokenizer_path,
@@ -78,6 +76,8 @@ else:
         hugging_face_settings,
         tokenizer_settings,
     )
+else:
+    raise ValueError(f"Invalid loading method: {general_settings.loading_method}")
 
 print("--------------------------Model loaded!-----------------------------")
 

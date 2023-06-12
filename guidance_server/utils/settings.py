@@ -81,7 +81,7 @@ class BaseSettings:
 class GeneralSettings(BaseSettings):
     def __init__(self, env: EnvironmentVariables) -> None:
         super().__init__(env, "general")
-        supported_list = ["HUGGING_FACE", "GPTQ"]
+        supported_list = ["HUGGING_FACE", "GPTQ", "CPP"]
         if self.loading_method not in supported_list:
             raise ValueError(
                 f"Loading method {self.loading_method} not in supported list: {supported_list}"
