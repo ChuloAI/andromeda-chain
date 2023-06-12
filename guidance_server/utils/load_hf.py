@@ -35,9 +35,9 @@ def load_hf_model(
     if hf_settings.load_in_8bit:
         model_config["load_in_8bit"] = True
 
-    model_config["low_cpu_usage"] = hf_settings.low_cpu_usage
+    if hf_settings.device_map:
+        model_config["device_map"] = hf_settings.device_map
 
-    model_config["device_map"] = hf_settings.device_map
     tokenizer = AutoTokenizer.from_pretrained(
         general_settings.tokenizer_path, use_fast=tokenizer_settings.use_fast
     )

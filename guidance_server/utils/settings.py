@@ -26,7 +26,6 @@ class EnvironmentVariables:
         # HuggingFace
         self.hf_bool_load_in_4bit = os.getenv("HF_BOOL_USE_4_BIT")
         self.hf_bool_load_in_8bit = os.getenv("HF_BOOL_USE_8_BIT")
-        self.hf_bool_low_cpu_usage = os.getenv("HF_BOOL_LOW_CPU_USAGE")
         self.hf_device_map = os.getenv("HF_DEVICE_MAP")
 
         # GPTQ
@@ -35,7 +34,6 @@ class EnvironmentVariables:
         self.gptq_int_pre_loaded_layers = os.getenv("GPTQ_INT_PRE_LOADED_LAYERS", "50")
         self.gptq_device = os.getenv("GPTQ_DEVICE", "cuda")
         self.gptq_bool_cpu_offloading = os.getenv("GPTQ_BOOL_CPU_OFFLOADING")
-
 
         # LLaMA CPP
         self.cpp_int_n_threads = os.getenv("CPP_INT_N_THREADS", "12")

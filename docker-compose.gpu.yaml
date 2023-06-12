@@ -35,7 +35,6 @@ services:
       # HuggingFace
       HF_BOOL_USE_8_BIT: true
       HF_BOOL_USE_4_BIT: false
-      HF_BOOL_LOW_CPU_USAGE: false
       HF_DEVICE_MAP: auto
 
       # GPTQ
