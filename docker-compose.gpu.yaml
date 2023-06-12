@@ -21,6 +21,10 @@ services:
       # GENERAL_TOKENIZER_PATH: /models/VMware_open-llama-7b-open-instruct
       # GENERAL_LOADING_METHOD: CPP
 
+      # GPTQ Model Example:
+      # GENERAL_MODEL_PATH: /models/vicuna-7B-1.1-GPTQ-4bit-128g
+      # GENERAL_LOADING_METHOD: GPTQ
+
       # HF Model Example
       GENERAL_MODEL_PATH: /models/VMware_open-llama-7b-open-instruct
       GENERAL_LOADING_METHOD: HUGGING_FACE
