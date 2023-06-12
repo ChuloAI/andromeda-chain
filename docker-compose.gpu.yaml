@@ -44,9 +44,10 @@ services:
       # GPTQ
       GPTQ_INT_WBITS: 4
       GPTQ_INT_GROUP_SIZE: 128
+      # How many layers loaded into GPU, decrease to save more VRAM at the expense of inference speed
       GPTQ_INT_PRE_LOADED_LAYERS: 20
       GPTQ_DEVICE: "cuda"
-      GPTQ_BOOL_CPU_OFFLOADING: false
+      GPTQ_BOOL_CPU_OFFLOADING: true
 
       # LLaMA CPP
       CPP_INT_N_GPU_LAYERS: 300
