@@ -15,6 +15,8 @@ def load_gptq_model(
     tokenizer_settings: settings.TokenizerSettings,
 ):
     print("Loading GPTQ model...")
+    model_path = general_settings.model_path
+
     files = os.listdir(model_path)
     for file in files:
         if file.endswith(".safetensors") or file.endswith(".pt"):
@@ -29,7 +31,7 @@ def load_gptq_model(
         )
 
         model = load_quant_with_offload(
-            general_settings.model_path,
+            model_path,
             checkpoint,
             wbits=gptq_settings.wbits,
             groupsize=gptq_settings.group_size,
@@ -51,7 +53,7 @@ def load_gptq_model(
         model.to(gptq_settings.device)
 
     tokenizer = AutoTokenizer.from_pretrained(
-        tokenizer_path, use_fast=tokenizer_settings.use_fast
+        general_settings.tokenizer_path, use_fast=tokenizer_settings.use_fast
     )
     llama = guidance.llms.Transformers(model, tokenizer, **guidance_settings.build_args())
     return llama
