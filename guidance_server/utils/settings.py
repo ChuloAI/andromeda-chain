@@ -28,7 +28,7 @@ class EnvironmentVariables:
         # LLaMA CPP
         self.cpp_int_n_threads = os.getenv("CPP_INT_N_THREADS", "12")
         self.cpp_int_n_gpu_layers = os.getenv("CPP_INT_N_GPU_LAYERS", "500")
-        self.cpp_bool_caching: os.getenv("CPP_BOOL_CACHING", "false")
+        self.cpp_bool_caching = os.getenv("CPP_BOOL_CACHING", "false")
 
     def __repr__(self) -> str:
         return str(self.__dict__)

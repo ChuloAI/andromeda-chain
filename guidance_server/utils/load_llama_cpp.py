@@ -10,7 +10,7 @@ def load_llama_cpp(
     cpp_settings: settings.LlamaCppSettings,
 ):
     print("Loading guidance model...")
-    guidance.llms.LlamaCpp(
+    llama = guidance.llms.LlamaCpp(
         model=model_path,  # Must point to .bin file
         tokenizer=tokenizer_path,
         n_gpu_layers=cpp_settings.n_gpu_layers,
@@ -18,4 +18,5 @@ def load_llama_cpp(
         caching=cpp_settings.caching,
         **guidance_settings.build_args()
     )
+    guidance.llm = llama 
     return guidance.llm
