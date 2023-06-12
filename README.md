@@ -22,7 +22,54 @@ pip install andromeda-chain
 ``` 
 
 ### Guidance Server
-Serving the guidance library with HuggingFace models loaded either with 4 bit quantization on GPU or on CPU (no quantization), behind a HTTP server.
+Serving the guidance library with local models behind a HTTP server.
+
+Supported methods:
+1. Hugging Face (16bit, 8bit, 4bit)
+2. GPTQ with or without CPU offload
+3. Experimental LLaMA CPP support based on the work of https://github.com/Maximilian-Winter
+
+The server configuration is passed through enviroment variables, typically through the docker-compose file:
+ 
+```yaml
+    GENERAL_BASE_IMAGE: GPU
+    # CPP Model Example:
+    # GENERAL_MODEL_PATH: /models/open-llama-7B-open-instruct.ggmlv3.q4_0.bin
+    # GENERAL_TOKENIZER_PATH: /models/VMware_open-llama-7b-open-instruct
+    # GENERAL_LOADING_METHOD: CPP
+
+    # GPTQ Model Example:
+    GENERAL_MODEL_PATH: /models/vicuna-7B-1.1-GPTQ-4bit-128g
+    GENERAL_LOADING_METHOD: GPTQ
+
+    # HF Model Example
+    # GENERAL_MODEL_PATH: /models/VMware_open-llama-7b-open-instruct
+    # GENERAL_LOADING_METHOD: HUGGING_FACE
+
+    # Guidance Settings
+    GUIDANCE_AFTER_ROLE: "|>"
+    GUIDANCE_BEFORE_ROLE: "<|"
+
+    # Tokenizer Settings
+    TK_BOOL_USE_FAST: false
+
+    # HuggingFace
+    HF_BOOL_USE_8_BIT: true
+    HF_BOOL_USE_4_BIT: false
+    HF_DEVICE_MAP: auto
+
+    # GPTQ
+    GPTQ_INT_WBITS: 4
+    GPTQ_INT_GROUP_SIZE: 128
+    GPTQ_INT_PRE_LOADED_LAYERS: 20
+    GPTQ_DEVICE: "cuda"
+    GPTQ_BOOL_CPU_OFFLOADING: false
+
+    # LLaMA CPP
+    CPP_INT_N_GPU_LAYERS: 300
+    CPP_INT_N_THREADS: 12
+    CPP_BOOL_CACHING: false
+```
 
 #### Docker Container
 
