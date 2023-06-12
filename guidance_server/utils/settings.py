@@ -6,11 +6,12 @@ class EnvironmentVariables:
     def __init__(self) -> None:
         # General Settings
         self.general_loading_method = os.getenv("GENERAL_LOADING_METHOD")
+        self.general_base_image = os.getenv("GENERAL_BASE_IMAGE", "GPU")
 
         try:
             self.general_model_path = os.environ["GENERAL_MODEL_PATH"]
         except KeyError:
-            error_msg = "You must set the 'MODEL_PATH' environment variable where the model to be loaded can be found."
+            error_msg = "You must set the 'GENERAL_MODEL_PATH' environment variable where the model to be loaded can be found."
             raise KeyError(error_msg)
 
         self.general_tokenizer_path = os.getenv("GENERAL_TOKENIZER_PATH", self.general_model_path)

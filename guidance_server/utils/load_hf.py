@@ -20,13 +20,15 @@ def load_hf_model(
     # New 4 bit quantized
     model_config = {}
     if hf_settings.load_in_4bit:
+        if general_settings.base_image == "CPU":
+            raise ValueError("HF 4bit quant is unsupported on CPU")
+
         nf4_config = BitsAndBytesConfig(
             load_in_4bit=hf_settings.load_in_4bit,
             bnb_4bit_quant_type="nf4",
             bnb_4bit_use_double_quant=True,
             bnb_4bit_compute_dtype=torch.bfloat16,
         )
-        loaded_bits_and_bytes = True
         model_config["revision"] = "main"
         model_config["quantization_config"] = nf4_config
 
@@ -34,8 +36,6 @@ def load_hf_model(
         model_config["load_in_8bit"] = True
 
     model_config["low_cpu_usage"] = hf_settings.low_cpu_usage
-
-    print("LOADED_BITS_AND_BYTES: ", loaded_bits_and_bytes)
 
     model_config["device_map"] = hf_settings.device_map
     tokenizer = AutoTokenizer.from_pretrained(

@@ -15,13 +15,14 @@ services:
     # Add the "stop_signal: SIGINT" option to use SIGINT signal for stopping the container gracefully
     stop_signal: SIGINT
     environment:
+      GENERAL_BASE_IMAGE: GPU
       # CPP Model Example:
-      # MODEL_PATH: /models/open-llama-7B-open-instruct.ggmlv3.q4_0.bin
-      # TOKENIZER_PATH: /models/VMware_open-llama-7b-open-instruct
+      # GENERAL_MODEL_PATH: /models/open-llama-7B-open-instruct.ggmlv3.q4_0.bin
+      # GENERAL_TOKENIZER_PATH: /models/VMware_open-llama-7b-open-instruct
       # GENERAL_LOADING_METHOD: CPP
 
       # HF Model Example
-      MODEL_PATH: /models/VMware_open-llama-7b-open-instruct
+      GENERAL_MODEL_PATH: /models/VMware_open-llama-7b-open-instruct
       GENERAL_LOADING_METHOD: HUGGING_FACE
 
       # Guidance Settings

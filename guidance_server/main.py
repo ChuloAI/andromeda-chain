@@ -1,5 +1,4 @@
 import logging
-import os
 from typing import Any, Dict, List
 
 from fastapi import FastAPI
@@ -46,6 +45,8 @@ print("--------------------------------------------------------------------")
 print("--------------------------Loading model-----------------------------")
 llama = None
 if detected_gptq_in_path or general_settings.loading_method == "GPTQ":
+    if general_settings.base_image == "CPU":
+        raise ValueError(f"Unsupported Loading Method for CPU: {general_settings.loading_method}")
     llama = load_gptq.load_gptq_model(
         general_settings,
         guidance_settings,
