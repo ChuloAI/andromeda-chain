@@ -17,13 +17,13 @@ services:
     environment:
       GENERAL_BASE_IMAGE: GPU
       # CPP Model Example:
-      # GENERAL_MODEL_PATH: /models/open-llama-7B-open-instruct.ggmlv3.q4_0.bin
-      # GENERAL_TOKENIZER_PATH: /models/VMware_open-llama-7b-open-instruct
-      # GENERAL_LOADING_METHOD: CPP
+      GENERAL_MODEL_PATH: /models/open-llama-7B-open-instruct.ggmlv3.q4_0.bin
+      GENERAL_TOKENIZER_PATH: /models/VMware_open-llama-7b-open-instruct
+      GENERAL_LOADING_METHOD: CPP
 
       # GPTQ Model Example:
-      GENERAL_MODEL_PATH: /models/vicuna-7B-1.1-GPTQ-4bit-128g
-      GENERAL_LOADING_METHOD: GPTQ
+      # GENERAL_MODEL_PATH: /models/vicuna-7B-1.1-GPTQ-4bit-128g
+      # GENERAL_LOADING_METHOD: GPTQ
 
       # HF Model Example
       # GENERAL_MODEL_PATH: /models/VMware_open-llama-7b-open-instruct

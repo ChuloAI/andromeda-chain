@@ -1,3 +1,4 @@
+# This image is outdated and needs to be rebuilt for 0.5 (might require code changes/new release)
 version: '3'
 services:
   guidance:
