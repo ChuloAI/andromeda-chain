@@ -1,5 +1,4 @@
 import logging
-import os
 from typing import Any, Dict, List
 
 from fastapi import FastAPI
@@ -7,17 +6,11 @@ import guidance
 from guidance import Program
 from pydantic import BaseModel
 
-from utils import settings, load_gptq, load_hf
+from utils import settings, load_gptq, load_hf, load_llama_cpp
 from utils.no_buffer import print
 
 logger = logging.getLogger("uvicorn")
 logger.setLevel(logging.DEBUG)
-
-try:
-    model_path = os.environ["MODEL_PATH"]
-except KeyError:
-    error_msg = "You must set the 'MODEL_PATH' environment variable where the model to be loaded can be found."
-    raise KeyError(error_msg)
 
 
 print("------------------Loading config from environment------------------")
@@ -33,25 +26,54 @@ print("Hugging Face Settings: ", hugging_face_settings)
 gptq_settings = settings.GPTQSettings(environment_variables)
 print("GPTQ Settings: ", gptq_settings)
 
+cpp_settings = settings.LlamaCppSettings(environment_variables)
+print("CPP Settings: ", cpp_settings)
+
 tokenizer_settings = settings.TokenizerSettings(environment_variables)
 print("Tokenizer Settings: ", tokenizer_settings)
 
+guidance_settings = settings.GuidanceSettings(environment_variables)
+print("Tokenizer Settings: ", tokenizer_settings)
 
-detected_gptq_in_path = "gptq" in model_path.lower()
+
+detected_gptq_in_path = "gptq" in general_settings.model_path.lower()
 print("Loading model, this may take a while...")
-print("MODEL_PATH: ", model_path)
+print("MODEL_PATH: ", general_settings.model_path)
 print("DETECTED_GPTQ_IN_PATH: ", detected_gptq_in_path)
 print("--------------------------------------------------------------------")
 
 print("--------------------------Loading model-----------------------------")
 llama = None
 if detected_gptq_in_path or general_settings.loading_method == "GPTQ":
-    llama = load_gptq.load_gptq_model(model_path, general_settings, gptq_settings, tokenizer_settings)
+    if general_settings.base_image == "CPU":
+        raise ValueError(f"Unsupported Loading Method for CPU: {general_settings.loading_method}")
+    llama = load_gptq.load_gptq_model(
+        general_settings,
+        guidance_settings,
+        gptq_settings,
+        tokenizer_settings,
+    )
+elif general_settings.loading_method == "CPP":
+    llama = load_llama_cpp.load_llama_cpp(
+        general_settings,
+        guidance_settings,
+        cpp_settings,
+    )
+elif general_settings.loading_method == "HUGGING_FACE":
+    llama = load_hf.load_hf_model(
+        general_settings,
+        guidance_settings,
+        hugging_face_settings,
+        tokenizer_settings,
+    )
 else:
-    llama = load_hf.load_hf_model(model_path, general_settings, hugging_face_settings, tokenizer_settings)
+    raise ValueError(f"Invalid loading method: {general_settings.loading_method}")
+
 print("--------------------------Model loaded!-----------------------------")
 
 print("Starting server...")
+
+
 class Request(BaseModel):
     input_vars: Dict[str, Any]
     output_vars: List[str]

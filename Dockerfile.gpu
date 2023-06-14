@@ -24,5 +24,6 @@ RUN pip install git+https://github.com/paolorechia/GPTQ-for-LLaMa@3797a5ced97e90
 COPY ./guidance_server guidance_server
 WORKDIR guidance_server
 
+RUN LLAMA_CUBLAS=1 CMAKE_ARGS=-DLLAMA_CUBLAS=on FORCE_CMAKE=1 pip install llama-cpp-python --no-cache-dir --force-reinstall --verbose
 # Set the entrypoint
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "9000"]
